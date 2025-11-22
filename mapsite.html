@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa del Sitio - SENOVA</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts (Poppins) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fff;
+            --text-color: #212529;
+            --card-bg: #fff;
+            --card-header-bg: #f8f9fa;
+            --muted-text: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            /* Aplicar nueva tipografía */
+            position: relative;
+            /* Necesario para el z-index del contenido */
+        }
+
+        /* Pseudo-elemento para el fondo con el logo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('imgs/logo.png');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 50%;
+            opacity: 0.05;
+            /* Opacidad muy baja */
+            filter: blur(8px);
+            /* Efecto de desenfoque */
+            z-index: -1;
+            /* Ponerlo detrás de todo el contenido */
+        }
+
+        /* --- Dark Mode --- */
+        body.dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #f8f9fa;
+            --card-bg: #2c2c2c;
+            --card-header-bg: #343a40;
+            --muted-text: #adb5bd;
+            --border-color: #495057;
+        }
+
+        body.dark-mode .card,
+        body.dark-mode .modal-content {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        body.dark-mode .card-header,
+        body.dark-mode .modal-header {
+            background-color: var(--card-header-bg);
+        }
+
+        body.dark-mode .list-group-item {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        body.dark-mode .text-muted {
+            color: var(--muted-text) !important;
+        }
+
+        body.dark-mode .list-group-item-success {
+            background-color: rgba(40, 167, 69, 0.2);
+            border-left-color: #28a745;
+        }
+
+        body.dark-mode .list-group-item-danger {
+            background-color: rgba(220, 53, 69, 0.2);
+            border-left-color: #dc3545;
+        }
+
+        body.dark-mode .btn-outline-secondary {
+            color: #ced4da;
+            border-color: #ced4da;
+        }
+
+        body.dark-mode .footer-title {
+            color: #fff !important;
+        }
+
+        .card-header h2,
+        .card-header h3 {
+            margin-bottom: 0;
+            font-size: 1.5rem;
+        }
+
+        .list-group-item ul ul .list-group-item {
+            border-left-color: #ffc107;
+        }
+
+        /* Estilos para el Navbar personalizado */
+        .navbar.bg-custom-gradient {
+            background: linear-gradient(to right, #242738, #325472);
+        }
+
+        /* Estilos para reemplazar el azul primario */
+        .btn-custom-dark {
+            background-color: #242738;
+            border-color: #242738;
+            color: white;
+        }
+
+        .btn-custom-dark:hover {
+            background-color: #325472;
+            border-color: #325472;
+            color: white;
+        }
+
+        .card-icon {
+            color: #242738;
+            transition: color 0.3s ease-in-out;
+        }
+
+        body.dark-mode .card-icon {
+            color: #f8f9fa;
+        }
+
+        /* Clases personalizadas para el color primario del tema */
+        .bg-custom-primary {
+            background-color: #242738;
+        }
+
+        .badge-custom-primary {
+            background-color: #242738;
+            color: white;
+        }
+
+        .navbar-brand img {
+            margin-right: 10px;
+            /* Espacio entre el logo y el texto */
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Estilos para el placeholder de imagen */
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background-color: #e9ecef;
+            border: 2px dashed #ced4da;
+            border-radius: .375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+
+        /* Estilos para las tarjetas interactivas */
+        .clickable-card {
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .clickable-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+
+        /* Estilos para la vista previa de imagen */
+        .modal-body img {
+            cursor: pointer;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .modal-body img:hover {
+            opacity: 0.85;
+        }
+
+        /* Estilos para la vista previa en pantalla completa */
+        #fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: none;
+            /* Oculto por defecto */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            /* Por encima de todo */
+            cursor: pointer;
+        }
+
+        #fullscreen-overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            cursor: default;
+        }
+
+        .clickable-badge {
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        /* Animaciones de entrada */
+        .animated-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .animated-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animación de entrada y salida para los modales */
+        .modal.modal-animated.fade .modal-dialog {
+            transform: scale(0.9);
+            opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        .modal.modal-animated.fade.show .modal-dialog {
+            transform: scale(1);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-custom-gradient shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="imgs/logo.png" alt="SENOVA Logo" width="30" height="30" class="d-inline-block align-top">
+                Sistema SENOVA
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="mapsite.html">Mapa del Sitio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="guia_de_uso.html">Guía de Uso</a></li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" href="#" id="theme-toggle" title="Cambiar tema">
+                            <i class="bi bi-moon-stars-fill"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h1 class="display-5 fw-bold">SENOVA</h1>
+            <p class="lead">Plataforma de gestión académica y administrativa desarrollada en PHP con una arquitectura
+                modular, orientada al manejo de usuarios, matrículas, estudiantes, asistencia y reportes.</p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="diagrama.html" class="btn btn-custom-dark btn-lg px-4 gap-3"><i
+                        class="bi bi-bounding-box-circles"></i> Ver Flujo de navegación</a>
+                <a href="https://senova.infinityfreeapp.com/login" class="btn btn-outline-secondary btn-lg px-4"><i
+                        class="bi bi-box-arrow-in-right"></i> Ver sistema</a>
+            </div>
+        </div>
+
+        <!-- Vista por Roles -->
+        <div id="vista-roles" class="card shadow-sm animated-section">
+            <div class="card-header bg-dark text-white">
+                <h2><i class="bi bi-people-fill"></i> Vista Separada por Roles</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Administrador -->
+                    <div class="col-lg-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-header text-white bg-custom-primary">
+                                <h3 class="d-flex align-items-center"><img src="imgs/logo.png" width="24" height="24"
+                                        class="me-2" style="filter: brightness(0) invert(1);"> Administrador</h3>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Opciones del Dashboard Principal:</h6>
+                                <div>
+                                    <span class="badge m-1 p-2 clickable-badge badge-custom-primary"
+                                        data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                        data-title="Crear Usuario" data-image="imgs/crear_usuario.png"
+                                        data-description="Permite a los administradores crear nuevas cuentas, asignando roles, generando correo institucional (@senova.org) y cargando una imagen de perfil. Incluye validación de datos y confirmación con SweetAlert2.">Crear
+                                        Usuario</span>
+                                    <span class="badge m-1 p-2 clickable-badge" style="background-color: #242738;"
+                                        data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                        data-title="Lista de Usuarios" data-image="imgs/lista_usuarios.png"
+                                        data-description="Muestra una tabla con todos los usuarios registrados. Permite al administrador editar o eliminar perfiles, con una confirmación de seguridad (SweetAlert2) antes de borrar un registro.">Lista
+                                        de Usuarios</span>
+                                    <span class="badge m-1 p-2 clickable-badge" style="background-color: #242738;"
+                                        data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                        data-title="Configurar Colegio" data-image="imgs/config_colegio.png"
+                                        data-description="Área para configurar los datos generales del colegio, como el nombre, dirección, logo, y periodos académicos. Esta información se reflejará en todo el sistema.">Configurar
+                                        Colegio</span>
+                                    <span class="badge bg-secondary m-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                        data-bs-target="#featureDetailModal" data-title="Actualizar Datos"
+                                        data-image="imgs/actualizar_datos.png"
+                                        data-description="Permite al usuario modificar su propia información personal, como nombre, correo de contacto o cambiar su contraseña de acceso.">Actualizar
+                                        Datos</span>
+                                    <span class="badge bg-secondary m-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                        data-bs-target="#featureDetailModal" data-title="Cerrar Sesión"
+                                        data-image="imgs/cerrar_sesion.png"
+                                        data-description="Cierra la sesión activa del usuario y lo redirige de forma segura a la pantalla de Login Principal.">Cerrar
+                                        Sesión</span>
+                                </div>
+                                <h6 class="card-subtitle mt-3 mb-2 text-muted">Sidebar del Módulo Colegio:</h6>
+                                <ul class="list-group">
+                                    <li
+                                        class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
+                                        Gestión (Matrícula, Asistencia, etc.)<i class="bi bi-check-circle-fill"></i></li>
+                                    <li
+                                        class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
+                                        Estudiantes<i class="bi bi-check-circle-fill"></i></li>
+                                    <li
+                                        class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
+                                        Crear Asignaturas<i class="bi bi-check-circle-fill"></i></li>
+                                    <li
+                                        class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
+                                        Crear Cursos<i class="bi bi-check-circle-fill"></i></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Docente -->
+                    <div class="col-lg-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-header text-white bg-custom-primary">
+                                <h3 class="d-flex align-items-center"><img src="imgs/logo.png" width="24" height="24"
+                                        class="me-2" style="filter: brightness(0) invert(1);"> Docente</h3>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Opciones del Dashboard Principal:</h6>
+                                <div>
+                                    <span class="badge bg-secondary m-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                        data-bs-target="#featureDetailModal" data-title="Actualizar Datos"
+                                        data-image="imgs/actualizar_datos.png"
+                                        data-description="Permite al usuario modificar su propia información personal, como nombre, correo de contacto o cambiar su contraseña de acceso.">Actualizar
+                                        Datos</span>
+                                    <span class="badge bg-secondary m-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                        data-bs-target="#featureDetailModal" data-title="Cerrar Sesión"
+                                        data-image="imgs/cerrar_sesion.png"
+                                        data-description="Cierra la sesión activa del usuario y lo redirige de forma segura a la pantalla de Login Principal.">Cerrar
+                                        Sesión</span>
+                                </div>
+                                <h6 class="card-subtitle mt-3 mb-2 text-muted">Sidebar del Módulo Colegio:</h6>
+                                <ul class="list-group">
+                                    <li
+                                        class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
+                                        Gestión (Matrícula, Asistencia, etc.)<i class="bi bi-check-circle-fill"></i></li>
+                                    <li
+                                        class="list-group-item list-group-item-danger d-flex justify-content-between align-items-center">
+                                        Estudiantes<i class="bi bi-x-circle-fill"></i></li>
+                                    <li
+                                        class="list-group-item list-group-item-danger d-flex justify-content-between align-items-center">
+                                        Crear Asignaturas<i class="bi bi-x-circle-fill"></i></li>
+                                    <li
+                                        class="list-group-item list-group-item-danger d-flex justify-content-between align-items-center">
+                                        Crear Cursos<i class="bi bi-x-circle-fill"></i></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Secretaria -->
+                    <div class="col-lg-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-header text-white bg-custom-primary">
+                                <h3 class="d-flex align-items-center"><img src="imgs/logo.png" width="24" height="24"
+                                        class="me-2" style="filter: brightness(0) invert(1);"> Secretaria</h3>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Opciones del Dashboard Principal:</h6>
+                                <div>
+                                    <span class="badge bg-secondary m-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                        data-bs-target="#featureDetailModal" data-title="Actualizar Datos"
+                                        data-image="imgs/actualizar_datos.png"
+                                        data-description="Permite al usuario modificar su propia información personal, como nombre, correo de contacto o cambiar su contraseña de acceso.">Actualizar
+                                        Datos</span>
+                                    <span class="badge bg-secondary m-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                        data-bs-target="#featureDetailModal" data-title="Cerrar Sesión"
+                                        data-image="imgs/cerrar_sesion.png"
+                                        data-description="Cierra la sesión activa del usuario y lo redirige de forma segura a la pantalla de Login Principal.">Cerrar
+                                        Sesión</span>
+                                </div>
+                                <h6 class="card-subtitle mt-3 mb-2 text-muted">Sidebar del Módulo Colegio:</h6>
+                                <ul class="list-group">
+                                    <li
+                                        class="list-group-item list-group-item-danger d-flex justify-content-between align-items-center">
+                                        Gestión (Matrícula, Asistencia, etc.)<i class="bi bi-x-circle-fill"></i></li>
+                                    <li
+                                        class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
+                                        Estudiantes<i class="bi bi-check-circle-fill"></i></li>
+                                    <li
+                                        class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
+                                        Crear Asignaturas<i class="bi bi-check-circle-fill"></i></li>
+                                    <li
+                                        class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
+                                        Crear Cursos<i class="bi bi-check-circle-fill"></i></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Arquitectura y Tecnologías -->
+    <div class="container mt-4">
+        <div id="arquitectura" class="card shadow-sm mb-4 animated-section">
+        <div class="card-header bg-dark text-white">
+            <h2><i class="bi bi-braces"></i> Arquitectura y Tecnologías</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h4 class="mb-3">Arquitectura del Sistema</h4>
+                    <p>El sistema sigue una arquitectura tipo <strong>MVC simplificada
+                            (Modelo-Vista-Controlador)</strong>:</p>
+                    <ul>
+                        <li><strong>Modelo:</strong> Archivos PHP que gestionan consultas y conexión a la base de datos
+                            (p. ej., en la carpeta <code>database/</code>).</li>
+                        <li><strong>Vista:</strong> Archivos HTML/PHP que componen la interfaz de usuario (p. ej., en
+                            <code>perfil/</code>, <code>Matricula/</code>).</li>
+                        <li><strong>Controlador:</strong> Lógica PHP que coordina acciones entre el modelo y la vista, a
+                            menudo integrada en los mismos archivos de vista o en scripts dedicados.</li>
+                    </ul>
+                    <h4 class="mt-4 mb-3">Seguridad</h4>
+                    <p>El acceso a cada módulo está protegido por la función <code>verificarPermiso()</code>, que valida
+                        el rol del usuario contra una lista de roles permitidos, previniendo el acceso no autorizado a
+                        rutas restringidas.</p>
+                </div>
+                <div class="col-lg-6">
+                    <h4 class="mb-3">Tecnologías y Librerías</h4>
+                    <table class="table table-dark table-striped table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Tecnología / Librería</th>
+                                <th>Uso Principal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PHP (PDO)</td>
+                                <td>Conexión y gestión del backend</td>
+                            </tr>
+                            <tr>
+                                <td>MySQL</td>
+                                <td>Base de datos relacional</td>
+                            </tr>
+                            <tr>
+                                <td>HTML5 / CSS3 / JS</td>
+                                <td>Interfaz de usuario</td>
+                            </tr>
+                            <tr>
+                                <td>Bootstrap</td>
+                                <td>Estilos y diseño responsivo</td>
+                            </tr>
+                            <tr>
+                                <td>SweetAlert</td>
+                                <td>Alertas visuales interactivas</td>
+                            </tr>
+                            <tr>
+                                <td>TCPDF / wkhtmltopdf</td>
+                                <td>Generación de reportes PDF</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    </div>
+    <footer id="footer" class="bg-dark text-white pt-5 pb-4">
+        <div class="container text-center text-md-start">
+            <div class="row text-center text-md-start">
+
+                <div class="col-md-4 col-lg-4 col-xl-4 mx-auto mt-3">
+                    <h5 class="text-uppercase mb-4 fw-bold footer-title">Sistema SENOVA</h5>
+                    <p>Mapa de navegación interactivo que documenta la estructura y el flujo de funcionalidades del
+                        sistema de gestión académica SENOVA, diseñado como proyecyo de grado para la Institución
+                        Universitaria del Caribe.</p>
+                </div>
+
+                <div class="col-md-4 col-lg-4 col-xl-4 mx-auto mt-3">
+                    <h5 class="text-uppercase mb-4 fw-bold footer-title">Créditos</h5>
+                    <p><i class="bi bi-people-fill me-2"></i><strong>Desarrolladores:</strong><br>Neiler
+                        Castro<br>Sebastian Hernandez</p>
+                    <p><i class="bi bi-file-earmark-text-fill me-2"></i><strong>Documentación:</strong><br>Ronyl
+                        Ibarra<br>Yuliesis Carranza</p>
+                    <p><i class="bi bi-bank2 me-2"></i><strong>Universidad:</strong><br>Unicaribe (Institución
+                        Universitaria del Caribe)</p>
+                    <p><i class="bi bi-mortarboard-fill me-2"></i><strong>Asesor Académico:</strong><br>Jean Carlos
+                        Nuñez</p>
+                    <p><i class="bi bi-calendar-event-fill me-2"></i><strong>Programa:</strong><br>Tecnología en Gestión
+                        de
+                        Sistemas Informáticos</p>
+                </div>
+
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
+                    <h5 class="text-uppercase mb-4 fw-bold footer-title">Recursos</h5>
+                    <p><a href="https://github.com/Neiler30/UNICARIBE/tree/Unicaribe" class="text-white"
+                            style="text-decoration: none;"><i class="bi bi-github me-2"></i>Repositorio del Proyecto</a>
+                    </p>
+                </div>
+            </div>
+            <hr class="mb-4">
+            <p class="text-center text-white-50">© 2024 Sistema SENOVA. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Modal para mostrar información -->
+    <div class="modal fade modal-animated" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="infoModalLabel">Detalles de la Sección</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="infoModalBody">
+                    <img src="" id="modal-image" class="img-fluid rounded mb-3" alt="Captura de pantalla"
+                        style="display: none;">
+                    <h6 class="text-muted">¿Qué se hace aquí?</h6>
+                    <p id="modal-description"></p>
+                    <hr>
+                    <h6 class="text-muted">¿Quiénes tienen acceso?</h6>
+                    <p id="modal-roles"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Dashboards -->
+    <div class="modal fade modal-animated" id="dashboardModal" tabindex="-1" aria-labelledby="dashboardModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="dashboardModalLabel">2.0 Dashboards Principales</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">El contenido del dashboard varía según el rol del usuario. A continuación se
+                        detalla la vista de cada uno.</p>
+                    <!-- Pestañas de Navegación -->
+                    <ul class="nav nav-tabs" id="dashboardTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="admin-tab" data-bs-toggle="tab"
+                                data-bs-target="#admin-content" type="button" role="tab">Administrador</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="docente-tab" data-bs-toggle="tab"
+                                data-bs-target="#docente-content" type="button" role="tab">Docente</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="secretaria-tab" data-bs-toggle="tab"
+                                data-bs-target="#secretaria-content" type="button" role="tab">Secretaria</button>
+                        </li>
+                    </ul>
+                    <!-- Contenido de las Pestañas -->
+                    <div class="tab-content" id="dashboardTabContent">
+                        <div class="tab-pane fade show active" id="admin-content" role="tabpanel">
+                            <img src="imgs/dashboard_admin.png" class="img-fluid rounded mb-3"
+                                alt="Dashboard Administrador">
+                            <div>
+                                <strong>Opciones Visibles:</strong>
+                                <span class="badge m-1 p-2 clickable-badge badge-custom-primary"
+                                    data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                    data-title="Crear Usuario" data-image="imgs/crear_usuario.png"
+                                    data-description="Permite a los administradores crear nuevas cuentas, asignando roles, generando correo institucional (@senova.org) y cargando una imagen de perfil. Incluye validación de datos y confirmación con SweetAlert2.">Crear
+                                    Usuario</span>
+                                <span class="badge m-1 p-2 clickable-badge badge-custom-primary"
+                                    data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                    data-title="Lista de Usuarios" data-image="imgs/lista_usuarios.png"
+                                    data-description="Muestra una tabla con todos los usuarios registrados. Permite al administrador editar o eliminar perfiles, con una confirmación de seguridad (SweetAlert2) antes de borrar un registro.">Lista
+                                    de Usuarios</span>
+                                <span class="badge m-1 p-2 clickable-badge badge-custom-primary"
+                                    data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                    data-title="Configurar Colegio" data-image="imgs/config_colegio.png"
+                                    data-description="Área para configurar los datos generales del colegio, como el nombre, dirección, logo, y periodos académicos. Esta información se reflejará en todo el sistema.">Configurar
+                                    Colegio</span>
+                                <span class="badge bg-info m-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                    data-bs-target="#featureDetailModal" data-title="Módulo del Colegio"
+                                    data-image="imgs/modulo_colegio.png"
+                                    data-description="Botón principal que redirige al usuario al Login del Módulo del Colegio, una segunda capa de seguridad antes de acceder a la gestión académica.">Módulo
+                                    del Colegio</span>
+                                <span class="badge bg-secondary m-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                    data-bs-target="#featureDetailModal" data-title="Actualizar Datos"
+                                    data-image="imgs/actualizar_datos.png"
+                                    data-description="Permite al usuario modificar su propia información personal, como nombre, correo de contacto o cambiar su contraseña de acceso.">Actualizar
+                                    Datos</span>
+                                <span class="badge bg-secondary m-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                    data-bs-target="#featureDetailModal" data-title="Cerrar Sesión"
+                                    data-image="imgs/cerrar_sesion.png"
+                                    data-description="Cierra la sesión activa del usuario y lo redirige de forma segura a la pantalla de Login Principal.">Cerrar
+                                    Sesión</span>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="docente-content" role="tabpanel">
+                            <img src="imgs/dashboard_docente.png" class="img-fluid rounded mb-3"
+                                alt="Dashboard Docente">
+                            <p><strong>Opciones Visibles:</strong> <span class="badge bg-info m-1 p-2 clickable-badge"
+                                    data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                    data-title="Módulo del Colegio" data-image="imgs/modulo_colegio.png"
+                                    data-description="Botón principal que redirige al usuario al Login del Módulo del Colegio, una segunda capa de seguridad antes de acceder a la gestión académica.">Módulo
+                                    del Colegio</span> <span class="badge bg-secondary m-1 p-2 clickable-badge"
+                                    data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                    data-title="Actualizar Datos" data-image="imgs/actualizar_datos.png"
+                                    data-description="Permite al usuario modificar su propia información personal, como nombre, correo de contacto o cambiar su contraseña de acceso.">Actualizar
+                                    Datos</span> <span class="badge bg-secondary m-1 p-2 clickable-badge"
+                                    data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                    data-title="Cerrar Sesión" data-image="imgs/cerrar_sesion.png"
+                                    data-description="Cierra la sesión activa del usuario y lo redirige de forma segura a la pantalla de Login Principal.">Cerrar
+                                    Sesión</span></p>
+                        </div>
+                        <div class="tab-pane fade" id="secretaria-content" role="tabpanel">
+                            <img src="imgs/dashboard_secretaria.png" class="img-fluid rounded mb-3"
+                                alt="Dashboard Secretaria">
+                            <p><strong>Opciones Visibles:</strong> <span class="badge bg-info m-1 p-2 clickable-badge"
+                                    data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                    data-title="Módulo del Colegio" data-image="imgs/modulo_colegio.png"
+                                    data-description="Botón principal que redirige al usuario al Login del Módulo del Colegio, una segunda capa de seguridad antes de acceder a la gestión académica.">Módulo
+                                    del Colegio</span> <span class="badge bg-secondary m-1 p-2 clickable-badge"
+                                    data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                    data-title="Actualizar Datos" data-image="imgs/actualizar_datos.png"
+                                    data-description="Permite al usuario modificar su propia información personal, como nombre, correo de contacto o cambiar su contraseña de acceso.">Actualizar
+                                    Datos</span> <span class="badge bg-secondary m-1 p-2 clickable-badge"
+                                    data-bs-toggle="modal" data-bs-target="#featureDetailModal"
+                                    data-title="Cerrar Sesión" data-image="imgs/cerrar_sesion.png"
+                                    data-description="Cierra la sesión activa del usuario y lo redirige de forma segura a la pantalla de Login Principal.">Cerrar
+                                    Sesión</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Dashboard del Módulo del Colegio -->
+    <div class="modal fade modal-animated" id="moduleDashboardModal" tabindex="-1"
+        aria-labelledby="moduleDashboardModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="moduleDashboardModalLabel">4.0 Dashboard del Módulo del Colegio</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">El sidebar del módulo es el mismo para todos los roles, pero cada rol solo ve
+                        algunas opciones.</p>
+                    <!-- Pestañas de Navegación para el Módulo -->
+                    <ul class="nav nav-tabs" id="moduleDashboardTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="module-admin-tab" data-bs-toggle="tab"
+                                data-bs-target="#module-admin-content" type="button" role="tab">Administrador</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="module-docente-tab" data-bs-toggle="tab"
+                                data-bs-target="#module-docente-content" type="button" role="tab">Docente</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="module-secretaria-tab" data-bs-toggle="tab"
+                                data-bs-target="#module-secretaria-content" type="button" role="tab">Secretaria</button>
+                        </li>
+                    </ul>
+                    <!-- Contenido de las Pestañas del Módulo -->
+                    <div class="tab-content" id="moduleDashboardTabContent">
+                        <div class="tab-pane fade show active" id="module-admin-content" role="tabpanel">
+                            <img src="imgs/module_admin.png" class="img-fluid rounded mb-3"
+                                alt="Dashboard Módulo Administrador">
+                            <p><strong>Opciones Visibles:</strong> <span
+                                    class="badge bg-secondary me-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                    data-bs-target="#featureDetailModal" data-title="Gestión (Matrículas, Asistencia)"
+                                    data-image="imgs/gestion_estudiantes.png"
+                                    data-description="Permite realizar todas las operaciones (Crear, Leer, Actualizar, Eliminar) sobre los perfiles de los estudiantes, gestionar sus matrículas, registrar asistencias y generar reportes académicos.">Gestión</span>
+                                <span class="badge bg-secondary me-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                    data-bs-target="#featureDetailModal" data-title="Estudiantes"
+                                    data-image="imgs/estudiantes_secretaria.png"
+                                    data-description="Interfaz especializada para registrar y matricular nuevos estudiantes de forma ágil.">Estudiantes</span>
+                                <span class="badge bg-secondary me-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                    data-bs-target="#featureDetailModal" data-title="Asignaturas"
+                                    data-image="imgs/asignaturas.png"
+                                    data-description="Permite crear y gestionar las asignaturas que se imparten en el colegio, separadas por niveles (Primaria y Secundaria).">Asignaturas</span>
+                                <span class="badge bg-secondary me-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                    data-bs-target="#featureDetailModal" data-title="Cursos"
+                                    data-image="imgs/cursos.png"
+                                    data-description="Permite crear nuevos cursos o aulas, asociando un nivel, un grado y una sección (ej. Secundaria, 10mo, A).">Cursos</span>
+                            </p>
+                        </div>
+                        <div class="tab-pane fade" id="module-docente-content" role="tabpanel">
+                            <img src="imgs/module_docente.png" class="img-fluid rounded mb-3"
+                                alt="Dashboard Módulo Docente">
+                            <p><strong>Opciones Visibles:</strong> <span
+                                    class="badge bg-secondary me-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                    data-bs-target="#featureDetailModal" data-title="Gestión (Matrículas, Asistencia)"
+                                    data-image="imgs/gestion_estudiantes.png"
+                                    data-description="Permite al docente gestionar matrículas de su grupo, tomar asistencia y generar boletines y reportes de notas.">Gestión</span>
+                            </p>
+                            <p class="text-muted small mt-2">No tiene acceso a la creación de estudiantes, asignaturas o
+                                cursos.</p>
+                        </div>
+                        <div class="tab-pane fade" id="module-secretaria-content" role="tabpanel">
+                            <img src="imgs/module_secretaria.png" class="img-fluid rounded mb-3"
+                                alt="Dashboard Módulo Secretaria">
+                            <p><strong>Opciones Visibles:</strong> <span
+                                    class="badge bg-secondary me-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                    data-bs-target="#featureDetailModal" data-title="Estudiantes"
+                                    data-image="imgs/estudiantes_secretaria.png"
+                                    data-description="Interfaz especializada para que la secretaría pueda registrar y matricular nuevos estudiantes de forma ágil.">Estudiantes</span>
+                                <span class="badge bg-secondary me-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                    data-bs-target="#featureDetailModal" data-title="Asignaturas"
+                                    data-image="imgs/asignaturas.png"
+                                    data-description="Permite crear y gestionar las asignaturas que se imparten en el colegio, separadas por niveles (Primaria y Secundaria).">Asignaturas</span>
+                                <span class="badge bg-secondary me-1 p-2 clickable-badge" data-bs-toggle="modal"
+                                    data-bs-target="#featureDetailModal" data-title="Cursos"
+                                    data-image="imgs/cursos.png"
+                                    data-description="Permite crear nuevos cursos o aulas, asociando un nivel, un grado y una sección (ej. Secundaria, 10mo, A).">Cursos</span>
+                            </p>
+                            <p class="text-muted small mt-2">No tiene acceso al módulo de 'Gestión' (matrículas,
+                                asistencia).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Detalles de Funcionalidad -->
+    <div class="modal fade modal-animated" id="featureDetailModal" tabindex="-1"
+        aria-labelledby="featureDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="featureDetailModalLabel">Detalle de la Funcionalidad</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="featureDetailModalBody">
+                    <img src="" id="feature-modal-image" class="img-fluid rounded mb-3" alt="Captura de funcionalidad"
+                        style="display: none;">
+                    <h6 class="text-muted">¿Qué se hace aquí?</h6>
+                    <p id="feature-modal-description"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary me-auto" id="backBtn"
+                        style="display: none;">Volver</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay para Vista Previa en Pantalla Completa -->
+    <div id="fullscreen-overlay">
+        <img src="" id="fullscreen-image" alt="Vista previa en pantalla completa">
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- Script para el modal dinámico -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const infoModal = document.getElementById('infoModal');
+            infoModal.addEventListener('show.bs.modal', function (event) {
+                // Botón o tarjeta que activó el modal
+                const triggerElement = event.relatedTarget;
+
+                const modalImage = infoModal.querySelector('#modal-image');
+
+                // Extraer información de los atributos data-*
+                const title = triggerElement.getAttribute('data-title');
+                const description = triggerElement.getAttribute('data-description');
+                const rolesString = triggerElement.getAttribute('data-roles');
+                const imageSrc = triggerElement.getAttribute('data-image');
+
+                // Convertir la lista de roles en badges
+                const rolesBadges = rolesString.split(',').map(role =>
+                    `<span class="badge bg-secondary me-1">${role.trim()}</span>`
+                ).join('');
+
+                // Actualizar el contenido del modal
+                infoModal.querySelector('.modal-title').textContent = title;
+                infoModal.querySelector('#modal-description').textContent = description;
+                infoModal.querySelector('#modal-roles').innerHTML = rolesBadges;
+
+                if (imageSrc) {
+                    modalImage.src = imageSrc;
+                    modalImage.style.display = 'block';
+                } else {
+                    modalImage.style.display = 'none';
+                }
+            });
+
+            // --- Lógica para el modal de detalles de funcionalidad ---
+            const featureDetailModal = document.getElementById('featureDetailModal');
+            const backBtn = document.getElementById('backBtn');
+            let parentModalId = null; // Para saber a qué modal volver
+            featureDetailModal.addEventListener('show.bs.modal', function (event) {
+                const triggerElement = event.relatedTarget;
+                const modalImage = featureDetailModal.querySelector('#feature-modal-image');
+
+                const title = triggerElement.getAttribute('data-title');
+                const description = triggerElement.getAttribute('data-description');
+                const imageSrc = triggerElement.getAttribute('data-image');
+
+                featureDetailModal.querySelector('.modal-title').textContent = title;
+                featureDetailModal.querySelector('#feature-modal-description').textContent = description;
+
+                if (imageSrc) {
+                    modalImage.src = imageSrc;
+                    modalImage.style.display = 'block';
+                } else {
+                    modalImage.style.display = 'none';
+                }
+
+                // Comprobar si el modal se abrió desde otro modal y guardar su ID
+                const parentModalElement = triggerElement.closest('.modal');
+                if (parentModalElement) {
+                    parentModalId = parentModalElement.id;
+                    backBtn.style.display = 'block';
+                } else {
+                    parentModalId = null;
+                    backBtn.style.display = 'none';
+                }
+            });
+
+            // --- Lógica del botón "Volver" ---
+            backBtn.addEventListener('click', function () {
+                if (!parentModalId) return;
+
+                const featureModalInstance = bootstrap.Modal.getInstance(featureDetailModal);
+                const parentModalInstance = bootstrap.Modal.getInstance(document.getElementById(parentModalId));
+
+                featureDetailModal.addEventListener('hidden.bs.modal', () => {
+                    parentModalInstance.show();
+                }, { once: true });
+
+                featureModalInstance.hide();
+            });
+
+            // --- Lógica para el Modo Oscuro ---
+            const themeToggle = document.getElementById('theme-toggle');
+            const currentTheme = localStorage.getItem('theme');
+
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="bi bi-sun-fill"></i>';
+            }
+
+            themeToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.body.classList.toggle('dark-mode');
+                let theme = 'light';
+                if (document.body.classList.contains('dark-mode')) {
+                    theme = 'dark';
+                    themeToggle.innerHTML = '<i class="bi bi-sun-fill"></i>';
+                } else {
+                    themeToggle.innerHTML = '<i class="bi bi-moon-stars-fill"></i>';
+                }
+                localStorage.setItem('theme', theme);
+            });
+
+            // --- Lógica para animaciones al hacer scroll ---
+            const animatedSections = document.querySelectorAll('.animated-section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, {
+                threshold: 0.1 // Se activa cuando el 10% del elemento es visible
+            });
+
+            animatedSections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // --- Lógica para la vista previa en pantalla completa ---
+            const fullscreenOverlay = document.getElementById('fullscreen-overlay');
+            const fullscreenImage = document.getElementById('fullscreen-image');
+
+            function openImagePreview(event) {
+                // Asegurarse de que se hizo clic en una imagen
+                if (event.target.tagName === 'IMG') {
+                    fullscreenImage.src = event.target.src;
+                    fullscreenOverlay.style.display = 'flex';
+                }
+            }
+
+            function closeImagePreview() {
+                fullscreenOverlay.style.display = 'none';
+            }
+
+            // Añadir listeners a los cuerpos de los modales que contienen imágenes
+            document.getElementById('infoModalBody').addEventListener('click', openImagePreview);
+            document.getElementById('featureDetailModalBody').addEventListener('click', openImagePreview);
+            document.getElementById('moduleDashboardTabContent').addEventListener('click', openImagePreview); // Nuevo listener para el modal del módulo
+            document.getElementById('dashboardTabContent').addEventListener('click', openImagePreview);
+
+            // Cerrar la vista previa al hacer clic en el fondo o presionar ESC
+            fullscreenOverlay.addEventListener('click', closeImagePreview);
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeImagePreview();
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>

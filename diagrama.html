@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Navegación – SENOVA</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Google Fonts (Poppins) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 96px 24px 24px; /* espacio superior por navbar fijo */
+        }
+
+        body.dark-mode {
+            background: #1a1a1a;
+            color: #f8f9fa;
+        }
+
+        h2.page-title {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 48px;
+            color: #2a4d69;
+        }
+
+        body.dark-mode h2.page-title {
+            color: #6c9ec9;
+        }
+
+        .tabs {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .tab-button {
+            padding: 10px 22px;
+            font-size: 18px;
+            cursor: pointer;
+            border: 2px solid #2a4d69;
+            background-color: white;
+            color: #2a4d69;
+            margin: 0 6px;
+            border-radius: 10px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode .tab-button {
+            background-color: #2c2c2c;
+            color: #f8f9fa;
+            border-color: #495057;
+        }
+
+        .tab-button:hover {
+            background-color: #f0f4f8;
+        }
+
+        .tab-button.active {
+            background-color: #2a4d69;
+            color: white;
+        }
+
+        body.dark-mode .tab-button.active {
+            background-color: #6c9ec9;
+            color: #1a1a1a;
+        }
+
+        .tab-content {
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content.show {
+            opacity: 1;
+        }
+
+        .section { margin-bottom: 24px; }
+
+        /* Lienzo aislado con scroll */
+        .canvas-wrapper {
+            border: 1px solid #dee2e6;
+            background: #f8f9fc;
+            border-radius: 8px;
+            overflow: auto;
+            height: calc(100vh - 220px); /* navbar fijo + título y tabs */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        body.dark-mode .canvas-wrapper {
+            background: #222;
+            border-color: #444;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+
+        .canvas-surface {
+            position: relative;
+            width: 3000px;
+            height: 1700px;
+            margin: 0 auto; /* centra el lienzo dentro del wrapper */
+            transform-origin: top left;
+        }
+
+        .zoom-toolbar {
+            position: sticky;
+            top: 8px;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            margin: 8px;
+        }
+        body.dark-mode .zoom-toolbar {
+            background: rgba(34, 34, 34, 0.9);
+            border-color: #444;
+        }
+
+        .box {
+            position: absolute;
+            width: 260px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            font-size: 20px;
+            border-left: 10px solid #4a90e2;
+        }
+
+        body.dark-mode .box {
+            background: #2c2c2c;
+            color: #f8f9fa;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .admin .box { border-left-color: #007bff; }
+        .docente .box { border-left-color: #28a745; }
+        .secre .box { border-left-color: #ff9800; }
+
+        /* Líneas curvas */
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: visible;
+            pointer-events: none;
+        }
+
+        path {
+            fill: none;
+            stroke-width: 6px;
+            stroke: #444;
+            stroke-linecap: round;
+        }
+
+        body.dark-mode path {
+            stroke: #adb5bd;
+        }
+
+        /* Navbar estilo consistente */
+        .navbar.bg-custom-gradient {
+            background: linear-gradient(to right, #242738, #325472);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Botón de tema dentro del navbar */
+        .navbar #theme-toggle {
+            position: static;
+            background: transparent;
+            border: 0;
+            width: auto;
+            height: auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: inherit;
+        }
+        body.dark-mode .navbar #theme-toggle {
+            background: transparent;
+            border: 0;
+            color: inherit;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-custom-gradient shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="imgs/logo.png" alt="SENOVA Logo" width="30" height="30" class="d-inline-block align-top me-2">
+                Sistema SENOVA
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="guia_de_uso.html">Guía de Uso</a></li>
+                    <li class="nav-item"><a class="nav-link" href="mapsite.html">Mapa del Sitio</a></li>
+                    <li class="nav-item ms-3">
+                        <a class="nav-link" href="#" id="theme-toggle" title="Cambiar tema">
+                            <i class="bi bi-moon-stars-fill"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <h2 class="page-title">MAPA DE NAVEGACIÓN – SENOVA</h2>
+
+    <div class="tabs">
+        <button class="tab-button" data-tab="admin">Administrador</button>
+        <button class="tab-button" data-tab="docente">Docente</button>
+        <button class="tab-button" data-tab="secre">Secretaria</button>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- ========================= ADMIN ========================== -->
+    <!-- ========================================================== -->
+
+    <div id="admin" class="tab-content section admin">
+        <h2>Administrador</h2>
+        <div class="canvas-wrapper" data-scale="0.4">
+            <div class="zoom-toolbar d-flex align-items-center justify-content-end gap-2 p-2">
+                <div class="btn-group" role="group" aria-label="Zoom controls">
+                    <button type="button" class="btn btn-outline-secondary btn-sm zoom-out">-</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm zoom-in">+</button>
+                </div>
+                <input type="range" class="form-range zoom-range" min="0.25" max="2" step="0.05" value="0.4" style="width:180px;">
+                <span class="text-muted small zoom-label">40%</span>
+            </div>
+            <div class="canvas-surface">
+                <!-- Nivel 1 -->
+                <div class="box" style="left: 1200px; top: 0px;">Login Principal</div>
+                <!-- Nivel 2 -->
+                <div class="box" style="left: 1200px; top: 300px;">Dashboard Admin</div>
+                <!-- Nivel 3 (Opciones del Dashboard) -->
+                <div class="box" style="left: 200px; top: 300px;">Crear Usuario</div>
+                <div class="box" style="left: 500px; top: 300px;">Lista de Usuarios</div>
+                <div class="box" style="left: 800px; top: 300px;">Configurar Colegio</div>
+                <div class="box" style="left: 1600px; top: 300px;">Módulo del Colegio</div>
+                <!-- Nivel 4 -->
+                <div class="box" style="left: 1600px; top: 600px;">Login Módulo</div>
+                <!-- Nivel 5 -->
+                <div class="box" style="left: 1600px; top: 900px;">Dashboard Módulo</div>
+                <!-- Nivel 6 (Sidebar) -->
+                <div class="box" style="left: 400px; top: 1200px;">Gestión de Estudiantes</div>
+                <div class="box" style="left: 1000px; top: 1200px;">Estudiantes Secretaría</div>
+                <div class="box" style="left: 1600px; top: 1200px;">Asignaturas</div>
+                <div class="box" style="left: 2200px; top: 1200px;">Cursos</div>
+                <!-- Nivel 7 (Submódulos) -->
+                <div class="box" style="left: 100px; top: 1500px;">Estudiantes (CRUD)</div>
+                <div class="box" style="left: 400px; top: 1500px;">Matrículas</div>
+                <div class="box" style="left: 700px; top: 1500px;">Asistencias</div>
+                <div class="box" style="left: 1000px; top: 1500px;">Reportes</div>
+                <div class="box" style="left: 1450px; top: 1500px;">Primaria</div>
+                <div class="box" style="left: 1750px; top: 1500px;">Secundaria</div>
+                <div class="box" style="left: 2200px; top: 1500px;">Crear Curso</div>
+
+                <!-- LÍNEAS CURVAS -->
+                <svg width="3000" height="1700">
+                    <!-- Login a Dashboard -->
+                    <path d="M 1320 120 C 1320 200 1320 250 1320 300" stroke="#007bff" />
+                    <!-- Dashboard a sus opciones -->
+                    <path d="M 1200 350 C 600 350 400 350 320 320" stroke="#007bff" />
+                    <path d="M 1200 350 C 800 350 650 350 620 320" stroke="#007bff" />
+                    <path d="M 1200 350 C 1000 350 900 350 920 320" stroke="#007bff" />
+                    <path d="M 1320 420 C 1450 420 1550 450 1600 600" stroke="#007bff" />
+                    <!-- Módulo a Login Módulo -->
+                    <path d="M 1720 420 C 1720 500 1720 550 1720 600" stroke="#007bff" />
+                    <!-- Login Módulo a Dashboard Módulo -->
+                    <path d="M 1720 720 C 1720 800 1720 850 1720 900" stroke="#007bff" />
+                    <!-- Dashboard Módulo a Sidebar -->
+                    <path d="M 1600 1020 C 800 1050 600 1150 520 1200" stroke="#007bff" />
+                    <path d="M 1600 1020 C 1200 1050 1100 1150 1120 1200" stroke="#007bff" />
+                    <path d="M 1600 1020 C 1600 1050 1600 1150 1600 1200" stroke="#007bff" />
+                    <path d="M 1600 1020 C 2000 1050 2100 1150 2200 1200" stroke="#007bff" />
+                    <!-- Gestión Estudiantes a sus submódulos -->
+                    <path d="M 520 1320 C 250 1350 150 1450 220 1500" stroke="#007bff" />
+                    <path d="M 520 1320 C 450 1350 400 1450 420 1500" stroke="#007bff" />
+                    <path d="M 520 1320 C 650 1350 700 1450 720 1500" stroke="#007bff" />
+                    <path d="M 520 1320 C 850 1350 950 1450 1020 1500" stroke="#007bff" />
+                    <!-- Asignaturas a sus submódulos -->
+                    <path d="M 1720 1320 C 1550 1350 1500 1450 1570 1500" stroke="#007bff" />
+                    <path d="M 1720 1320 C 1750 1350 1750 1450 1770 1500" stroke="#007bff" />
+                    <!-- Cursos a su submódulo -->
+                    <path d="M 2320 1320 C 2320 1350 2320 1450 2320 1500" stroke="#007bff" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================================== -->
+    <!-- ======================== DOCENTE ========================= -->
+    <!-- ========================================================== -->
+
+    <div id="docente" class="tab-content section docente">
+        <h2>Docente</h2>
+        <div class="canvas-wrapper" data-scale="0.4">
+            <div class="zoom-toolbar d-flex align-items-center justify-content-end gap-2 p-2">
+                <div class="btn-group" role="group" aria-label="Zoom controls">
+                    <button type="button" class="btn btn-outline-secondary btn-sm zoom-out">-</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm zoom-in">+</button>
+                </div>
+                <input type="range" class="form-range zoom-range" min="0.25" max="2" step="0.05" value="0.4" style="width:180px;">
+                <span class="text-muted small zoom-label">40%</span>
+            </div>
+            <div class="canvas-surface">
+                <!-- Nivel 1 -->
+                <div class="box" style="left: 1200px; top: 0px;">Login Principal</div>
+                <!-- Nivel 2 -->
+                <div class="box" style="left: 1200px; top: 300px;">Dashboard Docente</div>
+                <!-- Nivel 3 -->
+                <div class="box" style="left: 1200px; top: 600px;">Módulo del Colegio</div>
+                <!-- Nivel 4 -->
+                <div class="box" style="left: 1200px; top: 900px;">Login Módulo</div>
+                <!-- Nivel 5 -->
+                <div class="box" style="left: 1200px; top: 1200px;">Dashboard Módulo</div>
+                <!-- Nivel 6 -->
+                <div class="box" style="left: 1200px; top: 1500px;">Gestión de Estudiantes</div>
+
+                <svg width="3000" height="1500">
+                    <path d="M 1320 120 C 1320 200 1320 250 1320 300" stroke="#28a745" />
+                    <path d="M 1320 420 C 1320 500 1320 550 1320 600" stroke="#28a745" />
+                    <path d="M 1320 720 C 1320 800 1320 850 1320 900" stroke="#28a745" />
+                    <path d="M 1320 1020 C 1320 1100 1320 1150 1320 1200" stroke="#28a745" />
+                    <path d="M 1320 1320 C 1320 1400 1320 1450 1320 1500" stroke="#28a745" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================================== -->
+    <!-- ======================= SECRETARIA ======================= -->
+    <!-- ========================================================== -->
+
+    <div id="secre" class="tab-content section secre">
+        <h2>Secretaria</h2>
+        <div class="canvas-wrapper" data-scale="0.4">
+            <div class="zoom-toolbar d-flex align-items-center justify-content-end gap-2 p-2">
+                <div class="btn-group" role="group" aria-label="Zoom controls">
+                    <button type="button" class="btn btn-outline-secondary btn-sm zoom-out">-</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm zoom-in">+</button>
+                </div>
+                <input type="range" class="form-range zoom-range" min="0.25" max="2" step="0.05" value="0.4" style="width:180px;">
+                <span class="text-muted small zoom-label">40%</span>
+            </div>
+            <div class="canvas-surface">
+                <!-- Nivel 1 -->
+                <div class="box" style="left: 1200px; top: 0px;">Login Principal</div>
+                <!-- Nivel 2 -->
+                <div class="box" style="left: 1200px; top: 300px;">Dashboard Secretaria</div>
+                <!-- Nivel 3 -->
+                <div class="box" style="left: 1200px; top: 600px;">Módulo del Colegio</div>
+                <!-- Nivel 4 -->
+                <div class="box" style="left: 1200px; top: 900px;">Login Módulo</div>
+                <!-- Nivel 5 -->
+                <div class="box" style="left: 1200px; top: 1200px;">Dashboard Módulo</div>
+                <!-- Nivel 6 (Sidebar) -->
+                <div class="box" style="left: 600px; top: 1500px;">Estudiantes Secretaría</div>
+                <div class="box" style="left: 1200px; top: 1500px;">Asignaturas</div>
+                <div class="box" style="left: 1800px; top: 1500px;">Cursos</div>
+
+                <svg width="3000" height="1500">
+                    <path d="M 1320 120 C 1320 200 1320 250 1320 300" stroke="#ff9800" />
+                    <path d="M 1320 420 C 1320 500 1320 550 1320 600" stroke="#ff9800" />
+                    <path d="M 1320 720 C 1320 800 1320 850 1320 900" stroke="#ff9800" />
+                    <path d="M 1320 1020 C 1320 1100 1320 1150 1320 1200" stroke="#ff9800" />
+                    <path d="M 1200 1320 C 800 1350 700 1450 720 1500" stroke="#ff9800" />
+                    <path d="M 1200 1320 C 1200 1350 1200 1450 1200 1500" stroke="#ff9800" />
+                    <path d="M 1200 1320 C 1600 1350 1700 1450 1800 1500" stroke="#ff9800" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabName = button.dataset.tab;
+
+                    // Ocultar todo el contenido
+                    const activeContent = document.querySelector('.tab-content.active');
+                    if (activeContent) {
+                        activeContent.classList.remove('show'); // Inicia el fade-out
+                        // Espera a que termine la transición para ocultarlo
+                        setTimeout(() => {
+                            activeContent.classList.remove('active');
+                        }, 400);
+                    }
+
+                    // Quitar la clase activa de todos los botones
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+
+                    // Mostrar el contenido de la pestaña seleccionada y activar el botón
+                    const newContent = document.getElementById(tabName);
+                    newContent.classList.add('active'); // Lo hace visible (display: block)
+                    // Un pequeño retraso para permitir que el navegador aplique el display: block antes de la animación
+                    setTimeout(() => {
+                        newContent.classList.add('show'); // Inicia el fade-in
+                    }, 10);
+
+                    button.classList.add('active');
+                });
+            });
+
+            // Inicializar zoom por cada lienzo (independiente)
+            document.querySelectorAll('.canvas-wrapper').forEach(wrapper => {
+                const surface = wrapper.querySelector('.canvas-surface');
+                const range = wrapper.querySelector('.zoom-range');
+                const label = wrapper.querySelector('.zoom-label');
+                const btnIn = wrapper.querySelector('.zoom-in');
+                const btnOut = wrapper.querySelector('.zoom-out');
+                let scale = parseFloat(wrapper.dataset.scale || '0.4');
+                const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+                const apply = () => {
+                    surface.style.transform = `scale(${scale})`;
+                    if (range) range.value = scale;
+                    if (label) label.textContent = `${Math.round(scale * 100)}%`;
+                    wrapper.dataset.scale = String(scale);
+                };
+                if (btnIn) btnIn.addEventListener('click', () => { scale = clamp(scale + 0.1, 0.25, 2); apply(); });
+                if (btnOut) btnOut.addEventListener('click', () => { scale = clamp(scale - 0.1, 0.25, 2); apply(); });
+                if (range) range.addEventListener('input', () => { scale = parseFloat(range.value); apply(); });
+                apply();
+            });
+
+            // Activar la primera pestaña por defecto
+            document.querySelector('.tab-button[data-tab="admin"]').click();
+
+            // --- Lógica para el Modo Oscuro ---
+            const themeToggle = document.getElementById('theme-toggle');
+            const currentTheme = localStorage.getItem('theme');
+
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="bi bi-sun-fill"></i>';
+            }
+
+            themeToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.body.classList.toggle('dark-mode');
+                let theme = 'light';
+                if (document.body.classList.contains('dark-mode')) {
+                    theme = 'dark';
+                    themeToggle.innerHTML = '<i class="bi bi-sun-fill"></i>';
+                } else {
+                    themeToggle.innerHTML = '<i class="bi bi-moon-stars-fill"></i>';
+                }
+                localStorage.setItem('theme', theme);
+            });
+        });
+    </script>
+</body>
+
+</html>
