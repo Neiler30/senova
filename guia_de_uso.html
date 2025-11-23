@@ -83,15 +83,40 @@
             color: var(--muted-text) !important;
         }
 
+        /* Estilos para modales en modo oscuro */
+        body.dark-mode .modal-content {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        body.dark-mode .modal-header {
+            background-color: var(--card-header-bg);
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        body.dark-mode .modal-body {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        body.dark-mode .modal-footer {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+        }
+
         /* Ajuste de alertas en modo oscuro para mejor contraste */
         body.dark-mode .alert-info {
             background-color: rgba(44, 44, 44, 0.95);
             color: var(--text-color);
             border-color: var(--border-color);
         }
+
         body.dark-mode .alert-info .text-muted {
             color: #d0d4da !important;
         }
+
         body.dark-mode .alert-info code {
             color: #fff;
             background-color: rgba(255, 255, 255, 0.08);
@@ -179,8 +204,108 @@
         #next-image {
             right: 15px;
         }
+    /* --- Tarjetas de roles: estilo y animación --- */
+        .role-card { position: relative; border: 1px solid var(--border-color); background: var(--card-bg); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; overflow: hidden; }
+        .role-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #325472, #6aa6ff); }
+        .role-card.role-admin::before { background: linear-gradient(90deg, #2a6fd6, #6aa6ff); }
+        .role-card.role-docente::before { background: linear-gradient(90deg, #198754, #61d296); }
+        .role-card.role-secretaria::before { background: linear-gradient(90deg, #0dcaf0, #6fd7ff); }
+        .lift-on-hover:hover { transform: translateY(-6px); box-shadow: 0 .75rem 2rem rgba(0,0,0,.15); }
+        .icon-badge { display: inline-flex; width: 40px; height: 40px; align-items: center; justify-content: center; border-radius: 50%; color: #fff; }
+        .icon-badge.icon-admin { background: linear-gradient(135deg, #2a6fd6, #6aa6ff); }
+        .icon-badge.icon-docente { background: linear-gradient(135deg, #198754, #61d296); }
+        .icon-badge.icon-secretaria { background: linear-gradient(135deg, #0dcaf0, #6fd7ff); color: #0b132b; }
+        .reveal { opacity: 0; transform: translateY(12px); transition: opacity .5s ease, transform .5s ease; }
+        .reveal.show { opacity: 1; transform: none; }
+        .role-card ul li { margin-bottom: .5rem; }
+        .role-card ul li:last-child { margin-bottom: 0; }
 
+        body.dark-mode .role-card { background-color: var(--card-bg); border-color: var(--border-color); }
+        body.dark-mode .icon-badge.icon-secretaria { color: #0b132b; }
+        /* Tamaño del video de cambiar contraseña */
+        .video-small { max-width: 520px; margin-left: auto; margin-right: auto; }
 
+        /* Estilos para tarjetas flip */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            margin-bottom: 1rem;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            border-radius: 0.375rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+
+        .flip-card:hover .flip-card-inner,
+        .flip-card:focus-within .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.375rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 1.5rem 1rem;
+        }
+
+        .flip-card-back .btn {
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+
+        .flip-card-back .btn:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .flip-card {
+                height: 250px;
+            }
+        }
+
+        /* Soporte para modo oscuro ya integrado con variables CSS */
+
+        /* Transiciones para secciones */
+        #dashboardSection, #colegioSection {
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Estado activo de botones */
+        .btn.active {
+            background: white !important;
+            color: #242738 !important;
+            border: 2px solid #242738 !important;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(36, 39, 56, 0.3);
+        }
     </style>
 </head>
 
@@ -248,69 +373,102 @@
                         <!-- Columna izquierda: Instrucciones y credenciales -->
                         <div class="col-lg-6">
                             <h5 class="fw-semibold mb-3">¿Cómo obtengo mis credenciales?</h5>
-                            <p class="mb-2">Para ingresar al sistema SENOVA debes ser registrado por un <strong>administrador</strong>. Durante la creación de tu cuenta se asignan tus credenciales (usuario y contraseña) y tu rol (Administrador, Secretaria o Docente).</p>
-                           
-                            <p class="mb-3">Una vez recibas las credenciales, dirígete al inicio de sesión e ingrésalas para acceder a tu panel.</p>
+                            <p class="mb-2">Para ingresar al sistema SENOVA debes ser registrado por un
+                                <strong>administrador</strong>. Durante la creación de tu cuenta se asignan tus
+                                credenciales (usuario y contraseña) y tu rol (Administrador, Secretaria o Docente).</p>
+
+                            <p class="mb-3">Una vez recibas las credenciales, dirígete al inicio de sesión e ingrésalas
+                            para acceder a tu panel.</p>
+                            <div class="alert alert-info mb-0" role="alert">
+                            <div class="d-flex align-items-start">
+                            <i class="bi bi-shield-lock-fill me-2 fs-4"></i>
+                            <div>
+                            <strong>Acceso de administrador (demo)</strong>
+                            <ul class="mb-2 mt-1">
+                            <li>Usuario: <code>admin</code> <span class="text-muted">(se completa
+                            como <code>admin@senova.org</code>)</span></li>
+                            <li>Contraseña: <code>admin123</code></li>
+                            </ul>
+                            <small class="text-muted">En el login ingresa solo el <strong>nombre de
+                            usuario</strong>; el sistema añade automáticamente
+                            <code>@senova.org</code>. en la sesion de <a href="#Demostracion"  style="color: burlywood;">Demostración</a> puedes ver la guia de como hacerlo</small>
+                            </div>
+                            </div>
+                            </div>
                             </div>
                         <!-- Columna derecha: Carousel y demo -->
                         <div class="col-lg-6">
                             <div class="row g-3">
                                 <div class="col-12">
-                                    <div id="credencialesCarousel" class="carousel slide shadow rounded" data-bs-ride="carousel">
+                                    <div id="credencialesCarousel" class="carousel slide shadow rounded"
+                                        data-bs-ride="carousel">
                                         <div class="carousel-indicators">
-                                            <button type="button" data-bs-target="#credencialesCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                                            <button type="button" data-bs-target="#credencialesCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                                            <button type="button" data-bs-target="#credencialesCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                            <button type="button" data-bs-target="#credencialesCarousel"
+                                                data-bs-slide-to="0" class="active" aria-current="true"
+                                                aria-label="Slide 1"></button>
+                                            <button type="button" data-bs-target="#credencialesCarousel"
+                                                data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                            <button type="button" data-bs-target="#credencialesCarousel"
+                                                data-bs-slide-to="2" aria-label="Slide 3"></button>
                                         </div>
                                         <div class="carousel-inner rounded">
                                             <div class="carousel-item active">
-                                                <img src="imgs/login_principal.png" class="d-block w-100" alt="Pantalla de Login">
+                                                <img src="imgs/login_principal.png" class="d-block w-100"
+                                                    alt="Pantalla de Login">
                                             </div>
                                             <div class="carousel-item">
-                                                <img src="imgs/cred_secretaria.png" class="d-block w-100" alt="Credenciales de Secretaria">
+                                                <img src="imgs/cred_secretaria.png" class="d-block w-100"
+                                                    alt="Credenciales de Secretaria">
                                             </div>
                                             <div class="carousel-item">
-                                                <img src="imgs/cred_docente.png" class="d-block w-100" alt="Credenciales de Docente">
+                                                <img src="imgs/cred_docente.png" class="d-block w-100"
+                                                    alt="Credenciales de Docente">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                                            </div>
+                            </div>
                         </div>
                         <div class="row g-4 mt-2">
                             <div class="col-12">
                                 <h6 class="fw-semibold mt-3">Requisitos y datos que te solicitarán</h6>
                                 <ul class="mb-3">
-                                    <li>Para crear el usuario, el administrador necesita tu nombre y apellido, fecha de nacimiento, genero, numero de telefono y rol a asignar (Administrador, Docente o Secretaria).</li>
+                                    <li>Para crear el usuario, el administrador necesita tu nombre y apellido, fecha de
+                                        nacimiento, genero, numero de telefono y rol a asignar (Administrador, Docente o
+                                        Secretaria).</li>
                                     <hr>
-                                    <li>Nombre de usuario sugerido (sin dominio). El correo institucional se compone con dominio fijo <code>@senova.org</code>.</li>
+                                    <li>Nombre de usuario sugerido (sin dominio). El correo institucional se compone con
+                                        dominio fijo <code>@senova.org</code>.</li>
                                     <hr>
-                                    <li>la contraseña se puede cambiar en el area de actualizar datos que se encuentra en la barra lateral del dashboard.</li>
+                                    <li>la contraseña se puede cambiar en el area de actualizar datos que se encuentra
+                                        en la barra lateral del dashboard.</li>
                                     <hr>
                                 </ul>
                                 <h6 class="fw-semibold">Política y recuperación de contraseña</h6>
                                 <ul class="mb-3">
                                     <li>Recomendado: mínimo 8 caracteres, combinando letras y números.</li>
-                                    <li>Si olvidas tu clave, solicita restablecimiento al <strong>Administrador</strong> del sistema.</li>
-                                    <li>En el primer inicio, actualiza tu contraseña y verifica tus datos de perfil.</li>
+                                    <li>Si olvidas tu clave, solicita restablecimiento al <strong>Administrador</strong>
+                                        del sistema.</li>
+                                    <li>En el primer inicio, actualiza tu contraseña en el área de "Actualizar Datos" y tambien puedes verifica tus datos de perfil.
+                                    </li>
                                 </ul>
-                                <p class="text-muted small mb-3">Si tienes inconvenientes para ingresar, valida que estés usando solo el <strong>usuario</strong> sin dominio; el sistema añade automáticamente <code>@senova.com</code>.</p>
-
-                                <div class="alert alert-info mb-0" role="alert">
-                                    <div class="d-flex align-items-start">
-                                        <i class="bi bi-shield-lock-fill me-2 fs-4"></i>
-                                        <div>
-                                            <strong>Acceso de administrador (demo)</strong>
-                                            <ul class="mb-2 mt-1">
-                                                <li>Usuario: <code>admin</code> <span class="text-muted">(se completa como <code>admin@senova.com</code>)</span></li>
-                                                <li>Contraseña: <code>admin123</code></li>
-                                            </ul>
-                                            <small class="text-muted">En el login ingresa solo el <strong>nombre de usuario</strong>; el sistema añade automáticamente <code>@senova.com</code>.</small>
+                                <div class="card border-0 shadow-sm mb-3">
+                                    <div class="card-body video-small">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="bi bi-key-fill text-warning me-2"></i>
+                                            <strong>Cómo cambiar tu contraseña en "Actualizar Datos"</strong>
                                         </div>
+                                        <div class="ratio ratio-16x9">
+                                            <video class="w-100" src="imgs/cambiar_contraseña.mp4" controls preload="metadata" poster="imgs/actualizar_datos.png"></video>
+                                        </div>
+                                        <small class="text-muted d-block mt-2">Guía corta: Ingresa a tu panel, abre "Actualizar Datos", ubica el campo de contraseña, ingresa la nueva y guarda los cambios.</small>
                                     </div>
                                 </div>
+                                <p class="text-muted small mb-3">Si tienes inconvenientes para ingresar, valida que
+                                    estés usando solo el <strong>usuario</strong> sin dominio; el sistema añade
+                                    automáticamente <code>@senova.org</code>.</p>
 
-                                                            </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -318,37 +476,47 @@
         </section>
 
         <!-- Sección de Demostración de acceso -->
-        <section class="guide-section">
+        <section class="guide-section" >
             <div class="card shadow-sm overflow-hidden">
                 <div class="card-header bg-dark text-white d-flex align-items-center">
                     <i class="bi bi-camera-video-fill me-2"></i>
-                    <h2 class="h4 mb-0">Demostración de acceso</h2>
+                    <h2 class="h4 mb-0" id="Demostracion">Demostración de acceso</h2>
                 </div>
                 <div class="card-body p-4">
                     <div class="row g-4 align-items-center">
                         <div class="col-md-6">
                             <div class="ratio ratio-16x9">
-                                <video class="w-100" src="imgs/demo.mp4" controls preload="metadata" poster="imgs/login_principal.png"></video>
+                                <video class="w-100" src="imgs/demo.mp4" controls preload="metadata"
+                                    poster="imgs/login_principal.png"></video>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="card border-0 h-100">
                                 <div class="card-body p-0">
                                     <div class="mb-3">
-                                        <h6 class="mb-1 d-flex align-items-center"><span class="badge bg-danger me-2">Forma incorrecta</span>Escribir usuario con dominio</h6>
-                                        <p class="text-muted mb-2">Si ingresas el usuario junto con el dominio institucional (por ejemplo, <code>admin@senova.com</code>), el inicio de sesión fallará.</p>
+                                        <h6 class="mb-1 d-flex align-items-center"><span
+                                                class="badge bg-danger me-2">Forma incorrecta</span>Escribir usuario con
+                                            dominio</h6>
+                                        <p class="text-muted mb-2">Si ingresas el usuario junto con el dominio
+                                            institucional (por ejemplo, <code>admin@senova.org</code>), el inicio de
+                                            sesión fallará.</p>
                                         <ul class="text-muted small ms-4 mb-3">
-                                            <li>No agregues <code>@senova.com</code> manualmente.</li>
+                                            <li>No agregues <code>@senova.org</code> manualmente ya el login lo añade
+                                                automáticamente.</li>
                                             <li>Evita copiar y pegar correos completos desde documentos.</li>
                                         </ul>
                                     </div>
                                     <div>
-                                        <h6 class="mb-1 d-flex align-items-center"><span class="badge bg-success me-2">Forma correcta</span>Escribir solo el usuario</h6>
-                                        <p class="text-muted mb-2">Escribe únicamente el nombre de usuario (por ejemplo, <code>admin</code>). El sistema completa automáticamente el dominio <code>@senova.com</code>.</p>
+                                        <h6 class="mb-1 d-flex align-items-center"><span
+                                                class="badge bg-success me-2">Forma correcta</span>Escribir solo el
+                                            usuario</h6>
+                                        <p class="text-muted mb-2">Escribe únicamente el nombre de usuario (por ejemplo,
+                                            <code>admin</code>). El sistema completa automáticamente el dominio
+                                            <code>@senova.org</code>.</p>
                                         <ul class="text-muted small ms-4 mb-0">
                                             <li>Respeta mayúsculas/minúsculas si tu usuario las incluye.</li>
                                             <li>Si no recuerdas tu usuario, solicítalo al Administrador.</li>
-                                            <li>Tras ingresar por primera vez, actualiza tu contraseña.</li>
+
                                         </ul>
                                     </div>
                                 </div>
@@ -367,43 +535,62 @@
                     <h2 class="h4 mb-0">Después de iniciar sesión: ¿Qué puedes hacer?</h2>
                 </div>
                 <div class="card-body p-4">
-                    <p class="text-muted">Según tu rol, tendrás acceso a diferentes módulos y acciones dentro de la plataforma.</p>
+                    <p class="text-muted">Según tu rol, tendrás acceso a diferentes módulos y acciones dentro de la
+                        plataforma.</p>
                     <div class="row g-4">
                         <div class="col-md-4">
-                            <div class="card h-100 border-0 shadow-sm">
+                            <div class="card role-card role-admin h-100 border-0 shadow-sm lift-on-hover reveal">
                                 <div class="card-body">
-                                    <h5 class="fw-semibold"><i class="bi bi-person-gear me-2 text-primary"></i>Administrador</h5>
-                                    <ul class="mb-0">
-                                        <li>Gestionar usuarios: crear, editar, eliminar y asignar roles.</li>
-                                        <li>Configurar datos generales del colegio.</li>
-                                        <li>Organizar el ciclo académico: cursos y asignaturas.</li>
-                                        <li>Acceder a Gestión: matrículas, asistencia y reportes.</li>
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="icon-badge icon-admin me-2"><i class="bi bi-person-gear"></i></span>
+                                            <h5 class="fw-semibold mb-0">Administrador</h5>
+                                        </div>
+                                        <span class="badge rounded-pill bg-primary-subtle text-primary small">Acceso total</span>
+                                    </div>
+                                    <ul class="list-unstyled mb-0 small">
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary me-2"></i><span>Gestionar usuarios: crear, editar, eliminar y asignar roles.</span></li>
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary me-2"></i><span>Configurar datos generales del colegio.</span></li>
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary me-2"></i><span>Organizar el ciclo académico: cursos y asignaturas.</span></li>
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary me-2"></i><span>Acceder a Gestión escolar: estudiantes, matrículas, asistencia y reportes.</span></li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card h-100 border-0 shadow-sm">
+                            <div class="card role-card role-docente h-100 border-0 shadow-sm lift-on-hover reveal">
                                 <div class="card-body">
-                                    <h5 class="fw-semibold"><i class="bi bi-person-workspace me-2 text-success"></i>Docente</h5>
-                                    <ul class="mb-0">
-                                        <li>Gestionar el grupo asignado en el módulo Gestión.</li>
-                                        <li>Tomar asistencia diaria.</li>
-                                        <li>Registrar y consultar matrículas de su grupo.</li>
-                                        <li>Generar boletines y reportes de notas.</li>
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="icon-badge icon-docente me-2"><i class="bi bi-person-workspace"></i></span>
+                                            <h5 class="fw-semibold mb-0">Docente</h5>
+                                        </div>
+                                        <span class="badge rounded-pill bg-success-subtle text-success small">Académico</span>
+                                    </div>
+                                    <ul class="list-unstyled mb-0 small">
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-success me-2"></i><span>Gestionar el grupo asignado en el módulo Gestión escolar.</span></li>
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-success me-2"></i><span>Tomar asistencia diaria.</span></li>
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-success me-2"></i><span>Registrar y consultar matrículas de su grupo.</span></li>
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-success me-2"></i><span>Generar boletines y reportes de notas.</span></li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card h-100 border-0 shadow-sm">
+                            <div class="card role-card role-secretaria h-100 border-0 shadow-sm lift-on-hover reveal">
                                 <div class="card-body">
-                                    <h5 class="fw-semibold"><i class="bi bi-person-vcard me-2 text-info"></i>Secretaria</h5>
-                                    <ul class="mb-0">
-                                        <li>Registrar y listar estudiantes.</li>
-                                        <li>Crear cursos y asignaturas.</li>
-                                        <li>Consultar reportes (si el administrador lo permite).</li>
-                                        <li>Sin acceso a crear/eliminar usuarios ni al módulo completo de Gestión.</li>
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="icon-badge icon-secretaria me-2"><i class="bi bi-person-vcard"></i></span>
+                                            <h5 class="fw-semibold mb-0">Secretaria</h5>
+                                        </div>
+                                        <span class="badge rounded-pill bg-info-subtle text-info small">Administrativo</span>
+                                    </div>
+                                    <ul class="list-unstyled mb-0 small">
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-info me-2"></i><span>Registrar y listar estudiantes.</span></li>
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-info me-2"></i><span>Crear cursos y asignaturas.</span></li>
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-info me-2"></i><span>Consultar reportes (si el administrador lo permite).</span></li>
+                                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-info me-2"></i><span>Sin acceso a crear/eliminar usuarios ni al módulo completo de Gestión.</span></li>
                                     </ul>
                                 </div>
                             </div>
@@ -413,94 +600,124 @@
             </div>
         </section>
 
-        <!-- Sección de Roles y Permisos -->
+        <!-- Sección de Acciones Disponibles -->
         <div class="guide-section card shadow-sm">
             <div class="card-header bg-dark text-white">
-                <h2 class="h4 mb-0"><i class="bi bi-people-fill me-2"></i>Roles y Permisos</h2>
+                <h2 class="h4 mb-0"><i class="bi bi-gear me-2"></i>Acciones Disponibles en el Dashboard</h2>
             </div>
-            <div class="accordion shadow-sm" id="rolesAccordion">
-                <!-- Rol Administrador -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingAdmin">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseAdmin" aria-expanded="true" aria-controls="collapseAdmin">
-                            <i class="bi bi-person-gear me-2"></i><strong>Rol: Administrador</strong>
+            <div class="card-body text-center">
+                <div class="row justify-content-center g-3">
+                    <div class="col-auto">
+                        <button class="btn btn-lg shadow-sm active" id="btnDashboard" type="button" style="background: linear-gradient(to right, #242738, #325472); color: white; border: none;">
+                            <i class="bi bi-house-door me-2"></i>Dashboard Principal
                         </button>
-                    </h2>
-                    <div id="collapseAdmin" class="accordion-collapse collapse show" aria-labelledby="headingAdmin"
-                        data-bs-parent="#rolesAccordion">
-                        <div class="accordion-body">
-                            <p>Como Administrador, tienes <strong>acceso total</strong> al sistema. Tu función es
-                                supervisar y gestionar todos los aspectos de la plataforma.</p>
-                            <strong>Acciones Principales:</strong>
-                            <ul>
-                                <li><strong>Crear, editar y eliminar usuarios</strong> de cualquier rol.</li>
-                                <li>Configurar los datos generales del colegio.</li>
-                                <li>Gestionar el ciclo académico completo: crear cursos, asignar asignaturas y
-                                    registrar estudiantes.</li>
-                                <li>Controlar matrículas, tomar asistencia y generar reportes.</li>
-                                <li>Acceso completo al <strong>Módulo Colegio</strong> y todas sus funcionalidades.</li>
-                            </ul>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-lg shadow-sm" id="btnColegio" type="button" style="background: linear-gradient(to right, #242738, #325472); color: white; border: none;">
+                            <i class="bi bi-building-gear me-2"></i>Módulo del Colegio
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contenedor único para las secciones -->
+                <div id="sectionsContainer" class="position-relative mt-4">
+            <!-- Sección de Roles y Permisos Dashboard Principal -->
+            <div id="dashboardSection" class="guide-section">
+                <div class="card-header bg-dark text-white">
+                    <h2 class="h4 mb-0"><i class="bi bi-people-fill me-2"></i>Roles y Permisos — Dashboard Principal</h2>
+                </div>
+                <div class="row g-4 mt-4">
+                    <!-- Tarjeta Flip Administrador -->
+                    <div class="col-md-4">
+                        <div class="flip-card reveal">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <span class="icon-badge icon-admin mb-3"><i class="bi bi-person-gear"></i></span>
+                                    <h5 class="fw-semibold mb-0">Administrador</h5>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p class="mb-3 small">Como Administrador, en el dashboard principal tienes <strong>acceso total</strong> al sistema. Tu función es supervisar y gestionar todos los aspectos de la plataforma.</p>
+                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalAdminUsuarios"><i class="bi bi-people-gear me-1"></i>Gestionar usuarios</button>
+                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalAdminConfig"><i class="bi bi-gear-fill me-1"></i>Config. colegio</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tarjeta Flip Docente -->
+                    <div class="col-md-4">
+                        <div class="flip-card reveal">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <span class="icon-badge icon-docente mb-3"><i class="bi bi-person-workspace"></i></span>
+                                    <h5 class="fw-semibold mb-0">Docente</h5>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p class="mb-3 small">Como Docente, en el dashboard principal puedes actualizar tus datos personales.</p>
+                                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalDocenteActualizar"><i class="bi bi-person-gear me-1"></i>Actualizar datos</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- Rol Secretaria -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingSecretaria">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseSecretaria" aria-expanded="false"
-                            aria-controls="collapseSecretaria">
-                            <i class="bi bi-person-vcard me-2"></i><strong>Rol: Secretaria</strong>
-                        </button>
-                    </h2>
-                    <div id="collapseSecretaria" class="accordion-collapse collapse"
-                        aria-labelledby="headingSecretaria" data-bs-parent="#rolesAccordion">
-                        <div class="accordion-body">
-                            <p>Como Secretaria, tu rol es administrativo y de apoyo a la gestión académica. Tienes
-                                permisos para gestionar la información de los estudiantes y la estructura académica.
-                            </p>
-                            <strong>Acciones Principales:</strong>
-                            <ul>
-                                <li><strong>Registrar y listar estudiantes</strong> en el sistema.</li>
-                                <li>Crear y organizar los <strong>cursos y asignaturas</strong> del colegio.</li>
-                                <li>Consultar reportes (si el administrador te ha dado permiso).</li>
-                            </ul>
-                            <strong>Restricciones:</strong>
-                            <ul>
-                                <li>No puedes crear o eliminar usuarios (como docentes o administradores).</li>
-                                <li>No tienes acceso al módulo de <strong>"Gestión"</strong>, que incluye matrículas y
-                                    asistencia.</li>
-                            </ul>
+            </div>
+        </div>
+
+
+            <!-- Sección de Roles y Permisos Módulo Colegio -->
+            <div id="colegioSection" class="guide-section" style="display: none;">
+                <div class="card-header bg-dark text-white">
+                    <h2 class="h4 mb-0"><i class="bi bi-building-gear me-2"></i>Roles y Permisos — Módulo Colegio</h2>
+                </div>
+                <div class="row g-4 mt-4">
+                    <!-- Tarjeta Flip Administrador Colegio -->
+                    <div class="col-md-4">
+                        <div class="flip-card reveal">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <span class="icon-badge icon-admin mb-3"><i class="bi bi-person-gear"></i></span>
+                                    <h5 class="fw-semibold mb-0">Administrador</h5>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p class="mb-3 small">Como Administrador, en el módulo Colegio tienes acceso completo a la configuración institucional y gestión académica.</p>
+                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalAdminConfig"><i class="bi bi-gear-fill me-1"></i>Config. colegio</button>
+                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalAdminCiclo"><i class="bi bi-journal-check me-1"></i>Ciclo académico</button>
+                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalAdminGestion"><i class="bi bi-grid-fill me-1"></i>Módulo Gestión</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tarjeta Flip Docente Colegio -->
+                    <div class="col-md-4">
+                        <div class="flip-card reveal">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <span class="icon-badge icon-docente mb-3"><i class="bi bi-person-workspace"></i></span>
+                                    <h5 class="fw-semibold mb-0">Docente</h5>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p class="mb-3 small">Como Docente, en el módulo Colegio puedes gestionar tu grupo y acceder a funciones académicas.</p>
+                                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalDocenteMatriculas"><i class="bi bi-folder2-open me-1"></i>Matrículas del grupo</button>
+                                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalDocenteReportes"><i class="bi bi-bar-chart-line me-1"></i>Boletines y reportes</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- Rol Docente -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingDocente">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseDocente" aria-expanded="false" aria-controls="collapseDocente">
-                            <i class="bi bi-person-workspace me-2"></i><strong>Rol: Docente</strong>
-                        </button>
-                    </h2>
-                    <div id="collapseDocente" class="accordion-collapse collapse" aria-labelledby="headingDocente"
-                        data-bs-parent="#rolesAccordion">
-                        <div class="accordion-body">
-                            <p>Como Docente, tu rol es académico y estás a cargo de tu grupo de estudiantes. Tienes
-                                acceso a las herramientas necesarias para gestionar tus clases y el progreso de tus
-                                alumnos.</p>
-                            <strong>Acciones Principales:</strong>
-                            <ul>
-                                <li>Acceder al módulo de <strong>"Gestión"</strong> para manejar tus grupos.</li>
-                                <li><strong>Tomar asistencia</strong> diaria de tus estudiantes.</li>
-                                <li>Registrar y consultar las <strong>matrículas</strong> de tu grupo asignado.</li>
-                                <li><strong>Generar boletines</strong> y reportes de notas de tus alumnos.</li>
-                            </ul>
-                            <strong>Restricciones:</strong>
-                            <ul>
-                                <li>No puedes crear, editar o eliminar perfiles de estudiantes.</li>
-                                <li>No tienes acceso a la configuración general del colegio ni a la creación de
-                                    usuarios.</li>
-                            </ul>
+            </div>
+                    <!-- Tarjeta Flip Secretaria Colegio -->
+                    <div class="col-md-4">
+                        <div class="flip-card reveal">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <span class="icon-badge icon-secretaria mb-3"><i class="bi bi-person-vcard"></i></span>
+                                    <h5 class="fw-semibold mb-0">Secretaria</h5>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p class="mb-3 small">Como Secretaria, en el módulo Colegio puedes gestionar estudiantes y la estructura académica.</p>
+                                    <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalSecEstudiantes"><i class="bi bi-person-lines-fill me-1"></i>Registrar estudiantes</button>
+                                    <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalSecAcademico"><i class="bi bi-journals me-1"></i>Crear cursos/asignaturas</button>
+                                    <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalSecReportes"><i class="bi bi-clipboard-data me-1"></i>Consultar reportes</button>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -524,7 +741,7 @@
                                 <li>Ve a la opción <strong>"Crear Usuario"</strong> en tu panel.</li>
                                 <li>Rellena los datos personales (nombre, apellido, usuario, etc.).</li>
                                 <li>Asigna un <strong>Rol</strong> (Admin, Docente o Secretaria). El sistema generará
-                                    automáticamente un correo <code>@senova.com</code>.</li>
+                                    automáticamente un correo <code>@senova.org</code>.</li>
                                 <li>Opcionalmente, puedes subir una imagen de perfil.</li>
                                 <li>Haz clic en guardar. El sistema usará <code>password_hash()</code> para proteger la
                                     contraseña y te mostrará una confirmación con los datos creados.</li>
@@ -546,7 +763,8 @@
                                 <li>Usa el icono <i class="bi bi-pencil-fill"></i> para <strong>editar</strong> la
                                     información de un usuario.</li>
                                 <li>Usa el icono <i class="bi bi-trash-fill"></i> para <strong>eliminar</strong> un
-                                    usuario. Por seguridad, el sistema te pedirá una confirmación antes de borrarlo.</li>
+                                    usuario. Por seguridad, el sistema te pedirá una confirmación antes de borrarlo.
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -684,6 +902,8 @@
                     currentImageIndex = carouselImages.indexOf(clickedImage.src);
                     fullscreenImage.src = clickedImage.src;
                     fullscreenOverlay.style.display = 'flex';
+                    prevArrow.style.display = 'block';
+                    nextArrow.style.display = 'block';
                 }
             }
 
@@ -710,7 +930,7 @@
             if (carousel) {
                 carousel.addEventListener('click', openImagePreview);
             }
-            
+
             // Listeners para las flechas de la vista previa
             nextArrow.addEventListener('click', showNextImage);
             prevArrow.addEventListener('click', showPrevImage);
@@ -732,8 +952,477 @@
                     }
                 }
             });
+
+            // Vista previa para imágenes en modales
+            document.addEventListener('click', function (event) {
+                if (event.target.matches('.modal img')) {
+                    fullscreenImage.src = event.target.src;
+                    fullscreenOverlay.style.display = 'flex';
+                    prevArrow.style.display = 'none';
+                    nextArrow.style.display = 'none';
+                }
+            });
+
+            // Lógica para alternar secciones con animación
+            const dashboardBtn = document.getElementById('btnDashboard');
+            const colegioBtn = document.getElementById('btnColegio');
+            const dashboardSection = document.getElementById('dashboardSection');
+            const colegioSection = document.getElementById('colegioSection');
+
+            function hideAllSections() {
+                dashboardSection.style.opacity = '0';
+                colegioSection.style.opacity = '0';
+                setTimeout(() => {
+                    dashboardSection.style.display = 'none';
+                    colegioSection.style.display = 'none';
+                }, 300);
+                dashboardBtn.classList.remove('active');
+                colegioBtn.classList.remove('active');
+            }
+
+            function switchToDashboard() {
+                if (dashboardSection.style.display === 'block') {
+                    hideAllSections();
+                } else {
+                    colegioSection.style.opacity = '0';
+                    setTimeout(() => {
+                        colegioSection.style.display = 'none';
+                        dashboardSection.style.display = 'block';
+                        setTimeout(() => {
+                            dashboardSection.style.opacity = '1';
+                        }, 10);
+                    }, 300);
+                    dashboardBtn.classList.add('active');
+                    colegioBtn.classList.remove('active');
+                }
+            }
+
+            function switchToColegio() {
+                if (colegioSection.style.display === 'block') {
+                    hideAllSections();
+                } else {
+                    dashboardSection.style.opacity = '0';
+                    setTimeout(() => {
+                        dashboardSection.style.display = 'none';
+                        colegioSection.style.display = 'block';
+                        setTimeout(() => {
+                            colegioSection.style.opacity = '1';
+                        }, 10);
+                    }, 300);
+                    colegioBtn.classList.add('active');
+                    dashboardBtn.classList.remove('active');
+                }
+            }
+
+            dashboardBtn.addEventListener('click', switchToDashboard);
+            colegioBtn.addEventListener('click', switchToColegio);
+
+            // Cerrar con ESC
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    hideAllSections();
+                }
+            });
+
+            // --- Animación de entrada para tarjetas de rol ---
+            const revealEls = document.querySelectorAll('.reveal');
+            if ('IntersectionObserver' in window) {
+                const obs = new IntersectionObserver((entries, observer) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('show');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.12 });
+                revealEls.forEach((el, i) => {
+                    el.style.transitionDelay = `${i * 80}ms`;
+                    obs.observe(el);
+                });
+            } else {
+                revealEls.forEach(el => el.classList.add('show'));
+            }
         });
     </script>
+
+    <!-- Modales de ayuda por rol -->
+    <!-- ADMIN: Usuarios -->
+    <div class="modal fade" id="modalAdminUsuarios" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-people-gear me-2"></i>Gestionar usuarios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted">Desde el panel de Administración puedes crear, editar, eliminar usuarios y asignar roles. Esta función es exclusiva para administradores y permite gestionar todo el personal del sistema.</p>
+                            <h6 class="mt-3">Pasos para gestionar usuarios:</h6>
+                            <ol class="small">
+                                <li>Accede al módulo lista de usuarios" desde tu dashboard.</li>
+                                <li>Para crear un nuevo usuario, haz clic en "Registrar Usuario".</li>
+                                <li>Rellena los datos personales: nombre, apellido, fecha de nacimiento, género, teléfono.</li>
+                                <li>Asigna un rol: Administrador, Docente o Secretaria.</li>
+                                <li>El sistema genera automáticamente el correo institucional @senova.org.</li>
+                                <li>Guarda los cambios. La contraseña se encripta automáticamente con password_hash().</li>
+                            </ol>
+                            <p class="text-muted small">Para editar o eliminar usuarios existentes, ve a "Lista de Usuarios" y usa los iconos de edición (lápiz) o eliminación (basura). Recuerda que eliminar un usuario es irreversible.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="small text-muted mb-2">Vista de lista de usuarios</p>
+                            <img src="imgs/lista_usuarios.png" class="img-fluid rounded border mb-3" alt="Lista de usuarios" style="cursor: pointer;">
+                            <p class="small text-muted mb-2">Vista de registro de usuario</p>
+                            <img src="imgs/crear_usuario.png" class="img-fluid rounded border" alt="Crear usuario" style="cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN: Config Colegio -->
+    <div class="modal fade" id="modalAdminConfig" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-gear-fill me-2"></i>Configurar datos del colegio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Desde el módulo de Configuración del Colegio puedes actualizar toda la información institucional. Esta función es exclusiva para administradores.</p>
+                    <h6 class="mt-3">Campos que puedes configurar:</h6>
+                    <ul class="small">
+                        <li><strong>Nombre del colegio:</strong> Nombre oficial de la institución.</li>
+                        <li><strong>NIT:</strong> Número de identificación tributaria.</li>
+                        <li><strong>Teléfono / Celular:</strong> Contactos telefónicos.</li>
+                        <li><strong>Dirección:</strong> Ubicación física del colegio.</li>
+                        <li><strong>Correo Electrónico Institucional:</strong> Email oficial.</li>
+                        <li><strong>Correo Educativo:</strong> Email para asuntos académicos.</li>
+                        <li><strong>Resolución:</strong> Número de resolución educativa.</li>
+                        <li><strong>Convenio:</strong> Ej. Universidad del Caribe.</li>
+                        <li><strong>Código Dane:</strong> Identificador DANE.</li>
+                        <li><strong>Descripción o Lema:</strong> Descripción del colegio.</li>
+                        <li><strong>Logo del colegio:</strong> Opción de "Cambiar Logo".</li>
+                    </ul>
+                    <p class="text-muted small">Accede desde "Config. colegio" en tu dashboard y guarda los cambios para que se apliquen globalmente.</p>
+                    <img src="imgs/config_colegio.png" class="img-fluid rounded border" alt="Configurar colegio" style="cursor: pointer;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN: Ciclo Académico -->
+    <div class="modal fade" id="modalAdminCiclo" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-journal-check me-2"></i>Organizar ciclo académico</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted">Desde el módulo de Ciclo Académico puedes crear y organizar cursos y asignaturas. Esta función permite estructurar el plan de estudios.</p>
+                            <h6 class="mt-3">Funciones disponibles:</h6>
+                            <ul class="small">
+                                <li>Crear y gestionar cursos por grado.</li>
+                                <li>Definir asignaturas y asignar docentes.</li>
+                                <li>Organizar periodos académicos.</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="small text-muted mb-2">Vista de cursos</p>
+                            <img src="imgs/cursos.png" class="img-fluid rounded border mb-3" alt="Cursos" style="cursor: pointer;">
+                            <p class="small text-muted mb-2">Vista de asignaturas</p>
+                            <img src="imgs/asignaturas.png" class="img-fluid rounded border" alt="Asignaturas" style="cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN: Gestión -->
+    <div class="modal fade" id="modalAdminGestion" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-grid-fill me-2"></i>Módulo Gestión escolar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted">El Módulo Gestión es el corazón administrativo del sistema. Desde aquí puedes gestionar estudiantes, matrículas, asistencia y generar reportes completos.</p>
+                            <h6 class="mt-3">Funciones principales:</h6>
+                            <ul class="small">
+                                <li>Administrar estudiantes: registro, edición, consulta.</li>
+                                <li>Gestionar matrículas: nuevas y traslados.</li>
+                                <li>Controlar asistencia diaria.</li>
+                                <li>Generar reportes y estadísticas.</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="small text-muted mb-2">Vista de gestión de estudiantes</p>
+                            <img src="imgs/gestion_estudiantes.png" class="img-fluid rounded border mb-3" alt="Gestión estudiantes" style="cursor: pointer;">
+                            <p class="small text-muted mb-2">Dashboard del administrador</p>
+                            <img src="imgs/dashboard_admin.png" class="img-fluid rounded border" alt="Dashboard Admin" style="cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCENTE: Grupo -->
+    <div class="modal fade" id="modalDocenteGrupo" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-people-fill me-2"></i>Gestionar grupo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Como docente, desde Gestionar Grupo puedes administrar tu grupo asignado: ver lista de estudiantes, registrar calificaciones y añadir observaciones.</p>
+                    <h6 class="mt-3">Funciones disponibles:</h6>
+                    <ul class="small">
+                        <li>Ver lista completa de estudiantes del grupo.</li>
+                        <li>Registrar notas por asignatura y periodo.</li>
+                        <li>Añadir observaciones y comentarios.</li>
+                        <li>Consultar historial académico.</li>
+                    </ul>
+                    <img src="imgs/module_docente.png" class="img-fluid rounded border" alt="Módulo Docente" style="cursor: pointer;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCENTE: Asistencia -->
+    <div class="modal fade" id="modalDocenteAsistencia" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clipboard-check me-2"></i>Tomar asistencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">El módulo de asistencia te permite registrar la presencia diaria de tus estudiantes y consultar historiales individuales.</p>
+                    <h6 class="mt-3">Cómo usar:</h6>
+                    <ul class="small">
+                        <li>Selecciona la fecha y marca presente/ausente por estudiante.</li>
+                        <li>Guarda los cambios automáticamente.</li>
+                        <li>Consulta reportes de asistencia por periodo.</li>
+                        <li>Envía notificaciones a padres si es necesario.</li>
+                    </ul>
+                    <img src="imgs/dashboard_docente.png" class="img-fluid rounded border" alt="Asistencia Docente" style="cursor: pointer;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCENTE: Matrículas -->
+    <div class="modal fade" id="modalDocenteMatriculas" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-folder2-open me-2"></i>Matrículas del grupo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Desde Matrículas del Grupo puedes consultar y gestionar las matrículas de tus estudiantes asignados.</p>
+                    <h6 class="mt-3">Funciones:</h6>
+                    <ul class="small">
+                        <li>Ver estado de matrícula de cada estudiante.</li>
+                        <li>Consultar documentos adjuntos (traslados).</li>
+                        <li>Actualizar información de matrícula.</li>
+                        <li>Generar reportes de matrículas.</li>
+                    </ul>
+                    <img src="imgs/gestion_estudiantes.png" class="img-fluid rounded border" alt="Matrículas" style="cursor: pointer;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCENTE: Reportes -->
+    <div class="modal fade" id="modalDocenteReportes" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bar-chart-line me-2"></i>Boletines y reportes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">El módulo de reportes te permite generar boletines académicos y exportar reportes detallados de notas por periodo.</p>
+                    <h6 class="mt-3">Tipos de reportes:</h6>
+                    <ul class="small">
+                        <li>Boletines individuales por estudiante.</li>
+                        <li>Reportes de notas por asignatura.</li>
+                        <li>Estadísticas de rendimiento del grupo.</li>
+                        <li>Exportación en PDF o Excel.</li>
+                    </ul>
+                    <img src="imgs/libro.png" class="img-fluid rounded border" alt="Reportes" style="cursor: pointer;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCENTE: Actualizar Datos -->
+    <div class="modal fade" id="modalDocenteActualizar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-gear me-2"></i>Actualizar datos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted">Desde Actualizar Datos puedes modificar tu información personal y cambiar tu contraseña.</p>
+                            <h6 class="mt-3">Campos que puedes actualizar:</h6>
+                            <ul class="small">
+                                <li>Nombre y apellido.</li>
+                                <li>Teléfono de contacto.</li>
+                                <li>Dirección de residencia.</li>
+                                <li>Contraseña (mínimo 6 caracteres).</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="imgs/actualizar_datos.png" class="img-fluid rounded border mb-3" alt="Actualizar datos" style="cursor: pointer;">
+                            <img src="imgs/edit_usuario.png" class="img-fluid rounded border" alt="Editar usuario" style="cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECRETARIA: Estudiantes -->
+    <div class="modal fade" id="modalSecEstudiantes" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-lines-fill me-2"></i>Registrar/Listar estudiantes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Como secretaria, desde Registrar/Listar Estudiantes puedes añadir nuevos alumnos al sistema y gestionar la base de datos estudiantil.</p>
+                    <h6 class="mt-3">Funciones disponibles:</h6>
+                    <ul class="small">
+                        <li>Registrar estudiantes con datos personales completos.</li>
+                        <li>Editar información de estudiantes existentes.</li>
+                        <li>Consultar lista completa de estudiantes.</li>
+                        <li>Filtrar y buscar estudiantes por criterios.</li>
+                    </ul>
+                    <img src="imgs/estudiantes_secretaria.png" class="img-fluid rounded border" alt="Estudiantes" style="cursor: pointer;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECRETARIA: Académico -->
+    <div class="modal fade" id="modalSecAcademico" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-journals me-2"></i>Crear cursos y asignaturas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted">Desde Crear Cursos y Asignaturas puedes estructurar la oferta académica del colegio, asignar docentes y organizar la malla curricular.</p>
+                            <h6 class="mt-3">Funciones principales:</h6>
+                            <ul class="small">
+                                <li>Crear y gestionar cursos por grados.</li>
+                                <li>Definir asignaturas con horarios y docentes.</li>
+                                <li>Asignar profesores a materias específicas.</li>
+                                <li>Administrar la malla académica completa.</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="small text-muted mb-2">Vista de cursos</p>
+                            <img src="imgs/cursos.png" class="img-fluid rounded border mb-3" alt="Cursos" style="cursor: pointer;">
+                            <p class="small text-muted mb-2">Vista de asignaturas</p>
+                            <img src="imgs/asignaturas.png" class="img-fluid rounded border" alt="Asignaturas" style="cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECRETARIA: Reportes -->
+    <div class="modal fade" id="modalSecReportes" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clipboard-data me-2"></i>Consultar reportes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Desde Consultar Reportes puedes acceder a diversos informes administrativos, según los permisos configurados por el administrador.</p>
+                    <h6 class="mt-3">Reportes disponibles:</h6>
+                    <ul class="small">
+                        <li>Reportes de matrículas y estudiantes.</li>
+                        <li>Estadísticas académicas por curso.</li>
+                        <li>Reportes de asistencia general.</li>
+                        <li>Informes administrativos diversos.</li>
+                    </ul>
+                    <img src="imgs/dashboard_secretaria.png" class="img-fluid rounded border" alt="Reportes Secretaria" style="cursor: pointer;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECRETARIA: Actualizar Datos -->
+    <div class="modal fade" id="modalSecActualizar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-gear me-2"></i>Actualizar datos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted">Desde Actualizar Datos puedes modificar tu información personal y cambiar tu contraseña.</p>
+                            <h6 class="mt-3">Campos que puedes actualizar:</h6>
+                            <ul class="small">
+                                <li>Nombre y apellido.</li>
+                                <li>Teléfono de contacto.</li>
+                                <li>Correo electrónico.</li>
+                                <li>Contraseña (mínimo 8 caracteres).</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="imgs/actualizar_datos.png" class="img-fluid rounded border mb-3" alt="Actualizar datos" style="cursor: pointer;">
+                            <img src="imgs/edit_usuario.png" class="img-fluid rounded border" alt="Editar usuario" style="cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECRETARIA: Restricciones -->
+    <div class="modal fade" id="modalSecRestricciones" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Restricciones del rol</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li>No puede crear o eliminar usuarios.</li>
+                        <li>Sin acceso al módulo completo de Gestión.</li>
+                        <li>Acceso a reportes según permisos configurados.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

@@ -1,0 +1,33 @@
+Plan de implementación de las 3 tarjetas flip (Admin, Docente, Secretaria) con botones que abren los modales existentes:
+
+Qué haré:
+
+Añadir el CSS del flip-card (adaptado para integrar con el tema actual y modo oscuro).
+Insertar un nuevo bloque de 3 tarjetas dentro de “Roles y Permisos — Dashboard Principal” al inicio del acordeón (o justo debajo del encabezado).
+Cada tarjeta mostrará al frente el rol con un ícono y, al reverso, los botones que ya tienes configurados para abrir los modales:
+Admin: Gestionar usuarios, Panel principal, Reportes generales (o las que prefieras).
+Docente: Gestionar grupo, Tomar asistencia, Reportes del panel.
+Secretaria: Registrar/Listar estudiantes, Reportes del panel.
+No se toca “Después de iniciar sesión: ¿Qué puedes hacer?”, se mantiene con listas.
+Se reutilizan los modales ya añadidos, por lo que funcionarán al dar clic en los botones del reverso de las tarjetas.
+Resumen del CSS que añadiré:
+
+Clases: .flip-card, .flip-card-inner, .flip-card-front, .flip-card-back, con perspectiva y rotación 3D.
+Estilos integrados con tus variables (bordes, colores y sombras) y soporte para modo oscuro.
+Ajustes responsive y hover/ focus para accesibilidad.
+Estructura del HTML que añadiré dentro de la sección “Roles y Permisos — Dashboard Principal”:
+
+Un contenedor row con 3 col (col-md-4), cada una con una .flip-card:
+Frente: icono + título del rol.
+Reverso: botones Bootstrap outline por color del rol que disparan los data-bs-target de los modales actuales:
+Admin: #modalAdminUsuarios, #modalAdminGestion, #modalAdminReportesDash (si quieres, puedo crear este último modal, ahora no existe; alternativamente uso #modalAdminConfig o #modalAdminCiclo).
+Docente: #modalDocenteGrupo, #modalDocenteAsistencia, #modalDocenteReportes.
+Secretaria: #modalSecEstudiantes, #modalSecReportes.
+Nota concreta:
+
+Ahora mismo no existe un modal llamado #modalAdminReportesDash. Si lo quieres, puedo crearlo con contenido de ejemplo. Si no, coloco #modalAdminConfig o #modalAdminCiclo en su lugar.
+Indica si prefieres “Panel principal” y “Reportes generales” como botones para Admin, o mejor reutilizo “Config. colegio” y “Ciclo académico”.
+Confirmación de inserción:
+
+Insertaré el bloque de tarjetas justo debajo del título “Roles y Permisos — Dashboard Principal”, antes del acordeón, para que sea visible de inmediato.
+Mantendré también el acordeón debajo, así tienes ambas vistas: tarjetas flip con CTA y el acordeón detallado.
